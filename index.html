@@ -1,5 +1,148 @@
-<!DOCTYPE html>
-<html>
-<head><title>My Portfolio</title></head>
-<body><h1>Welcome to Rahasin's Page!</h1></body>
-</html>
+import React, { useState, useEffect } from 'react';
+import { motion, useScroll, useSpring, useTransform } from 'framer-motion';
+import { ShoppingCart, Search, Home, User, ArrowUpRight } from 'lucide-react';
+
+const OrivanInterface = () => {
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 50);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  return (
+    <div className="bg-[#0A0A0A] text-white min-h-screen font-sans selection:bg-[#4F46E5]">
+      
+      {/* 1. STICKY GLASS-HEADER */}
+      <nav className={`fixed top-0 w-full z-50 transition-all duration-300 px-6 py-4 ${
+        isScrolled ? 'backdrop-blur-xl bg-[#161616]/40 border-b border-[#4F46E5]/20' : 'bg-transparent'
+      }`}>
+        <div className="max-w-7xl mx-auto flex justify-between items-center">
+          <motion.div 
+            className="text-2xl font-bold tracking-tighter flex items-center gap-1 cursor-pointer"
+            whileHover="hover"
+          >
+            <motion.span 
+              variants={{ hover: { rotateY: 360 } }}
+              transition={{ duration: 0.8, ease: "easeInOut" }}
+              className="text-[#4F46E5] inline-block"
+            >
+              O
+            </motion.span>
+            <span>RIVAN</span>
+          </motion.div>
+          
+          <div className="hidden md:flex gap-8 text-sm font-medium tracking-widest uppercase">
+            {['Collections', 'Archive', 'Lab'].map((item) => (
+              <a key={item} href="#" className="hover:text-[#4F46E5] transition-colors">{item}</a>
+            ))}
+          </div>
+        </div>
+      </nav>
+
+      {/* 2. HERO SECTION (Scroll-Triggered Reveal) */}
+      <section className="relative pt-32 pb-20 px-6 overflow-hidden">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="max-w-7xl mx-auto"
+        >
+          <h1 className="text-7xl md:text-9xl font-black mb-6 uppercase leading-none tracking-tighter">
+            Tactile <br/> <span className="text-transparent border-t-2 border-b-2 border-[#4F46E5]">Futurism</span>
+          </h1>
+          <p className="font-mono text-[#4F46E5] text-lg max-w-md">
+            // STATUS: EXCLUSIVE_ACCESS_GRANTED <br/>
+            // LOCATION: CHITTAGONG_NODE_01
+          </p>
+        </motion.div>
+      </section>
+
+      {/* 3. ASYMMETRICAL PRODUCT GRID */}
+      <section className="max-w-7xl mx-auto px-6 pb-40">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          
+          {/* Featured Large Item (2x2) */}
+          <ProductCard 
+            size="md:col-span-2 md:row-span-2" 
+            name="Vanguard Shell" 
+            price="$840.00" 
+            img="https://images.unsplash.com/photo-1550009158-9ebf69173e03?auto=format&fit=crop&q=80&w=800" 
+          />
+
+          {/* Standard Items */}
+          <ProductCard name="Cipher Boot" price="$320.00" img="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=400" />
+          <ProductCard name="Ghost Frame" price="$195.00" img="https://images.unsplash.com/photo-1509191434969-5b62351f852f?auto=format&fit=crop&q=80&w=400" />
+          <ProductCard name="Neon Grip" price="$85.00" img="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=400" />
+          <ProductCard name="Ion Core" price="$1,200.00" img="https://images.unsplash.com/photo-1544117519-31a4b719223d?auto=format&fit=crop&q=80&w=400" />
+        </div>
+      </section>
+
+      {/* 4. MOBILE-FIRST NAVIGATION DOCK */}
+      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50">
+        <motion.div 
+          initial={{ y: 100 }}
+          animate={{ y: 0 }}
+          className="bg-[#161616]/60 backdrop-blur-2xl border border-[#4F46E5]/30 rounded-full px-6 py-3 flex items-center gap-10 shadow-[0_20px_50px_rgba(79,70,229,0.2)]"
+        >
+          <NavIcon icon={<Home size={22} />} active />
+          <NavIcon icon={<Search size={22} />} />
+          <div className="relative">
+            <NavIcon icon={<ShoppingCart size={22} />} />
+            <span className="absolute -top-1 -right-1 w-2 h-2 bg-[#4F46E5] rounded-full shadow-[0_0_10px_#4F46E5]" />
+          </div>
+          <NavIcon icon={<User size={22} />} />
+        </motion.div>
+      </div>
+    </div>
+  );
+};
+
+const ProductCard = ({ name, price, img, size = "" }) => (
+  <motion.div 
+    whileHover="hover"
+    initial={{ opacity: 0, scale: 0.95 }}
+    whileInView={{ opacity: 1, scale: 1 }}
+    viewport={{ once: true }}
+    className={`group relative overflow-hidden bg-[#161616] border border-white/5 cursor-pointer ${size}`}
+  >
+    {/* 3D Zoom Effect */}
+    <motion.img 
+      src={img} 
+      alt={name}
+      variants={{ hover: { scale: 1.1 } }}
+      transition={{ duration: 0.6 }}
+      className="w-full h-full object-cover opacity-80 group-hover:opacity-100"
+    />
+
+    {/* Glassmorphic Overlay */}
+    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-6">
+      <div className="flex justify-between items-end">
+        <div>
+          <p className="font-mono text-[#4F46E5] text-xs mb-1 uppercase tracking-tighter">New Arrival</p>
+          <h3 className="text-xl font-bold tracking-tight uppercase">{name}</h3>
+          <p className="text-white/60 font-mono">{price}</p>
+        </div>
+        <motion.div 
+          variants={{ hover: { y: 0, opacity: 1 } }}
+          initial={{ y: 20, opacity: 0 }}
+          className="bg-white/10 backdrop-blur-md p-3 border border-white/20 rounded-none shadow-xl"
+        >
+          <ArrowUpRight size={20} className="text-[#4F46E5]" />
+        </motion.div>
+      </div>
+    </div>
+  </motion.div>
+);
+
+const NavIcon = ({ icon, active = false }) => (
+  <motion.button 
+    whileTap={{ scale: 0.8 }}
+    className={`p-2 transition-colors ${active ? 'text-[#4F46E5]' : 'text-white/50 hover:text-white'}`}
+  >
+    {icon}
+  </motion.button>
+);
+
+export default OrivanInterface;
